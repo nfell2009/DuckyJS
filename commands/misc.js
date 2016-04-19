@@ -29,7 +29,43 @@ Ducky.registerCommand("/help", function(bot, message, msg) {
 });
 
 Ducky.registerCommand("penis length of %mention%", function(bot, message, msg) {
-	bot.sendMessage(message, "Coming soon");
+	var file = require('/root/ducky/data/penis_lengths.json');
+	var fpath = '/root/ducky/data/penis_lengths.json';
+ 
+	var fs = require('fs');
+
+	//try {
+	    //fs.accessSync(file, fs.F_OK);
+	    var jsonF = require("jsonfile");
+	    if(file[message.mentions[0].id]) {
+	    	var full = file[message.mentions[0].id];
+	    	var penis = [];
+	    	penis.push("8")
+	    	for(var i = 0; i < full; i++) {
+	    		penis.push("=");
+	    	}
+	    	penis.push("D");
+	    	var pout = penis.join("");
+	    	bot.sendMessage(message, "Penis length of " + message.mentions[0] + " is " + pout);
+	    } else {
+	    	var full = ((Math.random() * 10) + 1);
+	    	var penis = [];
+	    	penis.push("8")
+	    	for(var i = 0; i < full; i++) {
+	    		penis.push("=");
+	    	}
+	    	penis.push("D");
+	    	var pout = penis.join("");
+	    	bot.sendMessage(message, "Penis length of " + message.mentions[0] + " is " + pout);
+	    	var jsonString = '{\"' + message.mentions[0].id + '\":\"' + full + '\"}';
+	    	var jsonObj = JSON.parse(jsonString);
+			jsonF.writeFileSync(fpath, jsonObj);
+	    }
+	/*} catch (e) {
+	    fs.closeSync(fs.openSync(file, 'w'));
+	    bot.sendMessage(message, "Oh no! Something went wrong getting the girth of " + message.mentions[0]);
+	    console.log(e);
+	}*/
 });
 
 Ducky.registerCommand("monitor me", function(bot, message, msg) {

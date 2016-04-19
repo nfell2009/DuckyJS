@@ -94,9 +94,9 @@ bot.on("message", function(message) {
 	if(stopMyself(message.author.id)) {
 		return;
 	}
-	if(!isMaster(message.author.id)) {
+	/*if(!isMaster(message.author.id)) {
 		return;
-	}
+	}*/
 	// TODO: Notify logger (need to figure out how to not spam users...)
 	/*if(message.mentions.length > 0) {
 		for(var i = 0; i < message.mentions.length; i++) {
@@ -108,66 +108,64 @@ bot.on("message", function(message) {
 			}
 		}
 	}*/
+	var msg = message.content.toLowerCase();
+
 	for (var i in exports.triggers) {
 		var trigger = exports.triggers[i];
-		bot.sendMessage(message, trigger);
-	}
-	var msg = message.content.toLowerCase();
-	for(var i = 0; i < exports.triggers.length; i++) {
-		if(exports.triggers[i] == msg) {
+		if(trigger == msg) {
 			var callback_function = exports.callbacks[i];
  			callback_function(bot, message, msg);
  			return;
 		}
 	}
-	return;
 	
+	for (var i in exports.triggers) {
+		var trigger = exports.triggers[i];
 
-
-
-	for(var i = 0; i < exports.triggers.length; i++) {
-		var ts = exports.triggers[i].split(" ");
-		bot.sendMessage(message, ts[c] + " -> " + ms[c]);
+		var ts = trigger.split(" ");
 		var ms = msg.split(" ");
-		var nm = [];
 		var inMentions = false;
-		if(message.mentions.length > 0) {
-			var mentions = message.mentions.join(", ");
-		}
-		for(var c = 0; c < ms.length; c++) {
-
-			if(ts[c] == "%arg%") {
-				nm.push(ts[c]);
-			} else if (ts[c] == "%args%") {
-				nm.push(ts[c]);
-				break;
-			} else if (ts[c] == "%mention%") {
-				if(contains(mentions, ms[c])) {
-					nm.push(ts[c]);
+		var nm = [];
+		for (var t in ts) {
+			if(ts[t] == ms[t]) {
+				if(inMentions) {
+					/*if(!message.mentions.indexOf(ms[t]) > 0) {
+						nm.push(ts[t]);
+					}*/
+					continue;
 				} else {
-					bot.sendMessage(message, "Parse error! Arg type: \"mention\", got type: \"String\"");
-					break;
+					nm.push(ts[t]);
 				}
-			} else if (ts[c] == "%mentions%") {
-				nm.push("%mentions%")
+			} else if (ts[t] == "%arg%") {
+				nm.push(ts[t]);
+			} else if (ts[t] == "%args%") {
+				nm.push(ts[t]);
+				break;
+			} else if (ts[t] == "%mention%") {
+				/*if(message.mentions.indexOf(ms[t]) > 0) {
+					nm.push(ts[t]);
+				}*/
+				// Just going to push it straight up
+				nm.push(ts[t]);
+			} else if (ts[t] == "%mentions%") {
+				/*if(message.mentions.indexOf(ms[t]) > 0) {
+					nm.push(ts[t]);
+				}*/
 				inMentions = true;
-			} else if (inMentions) {
-				if(!ms[c].startsWith("@")) {
-					inMentions = false;
-				}
-			} else {
-				nm.push(ms[c]);
+				// Just going to push it straight up
+				nm.push(ts[t]);
 			}
 		}
-		
-		msg = nm.join(" ");
-		return;
-		if(exports.triggers[i] == msg) {
+		var newmsg = nm.join(" ");
+		if(trigger == newmsg) {
 			var callback_function = exports.callbacks[i];
  			callback_function(bot, message, msg);
  			return;
-		}
+ 		}
 	}
+
+	return;
 });
+
 var auth = require("./data/auth.json");
 bot.login(auth.email, auth.password);

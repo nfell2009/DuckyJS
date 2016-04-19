@@ -69,7 +69,12 @@ Ducky.registerCommand("about you", function(bot, message, msg) {
 	duckyinfo.push("Channels monitoring: " + bot.channels.length);
 	duckyinfo.push("Users found: " + bot.users.length);
 	duckyinfo.push("Private chats: " + bot.privateChannels.length);
-	duckyinfo.push("Uptime: " + bot.uptime/60 + " seconds");
+	var date1 = new Date(bot.uptime);
+	var date2 = new Date();
+	var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+	var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+	//duckyinfo.push("Uptime: " + duckydate.getDay() + " days, " + duckydate.getHours() + " hours, " + duckydate.getMinutes() + " minutes and " + duckydate.getSeconds() + " seconds");
+	duckyinfo.push("Uptime: " + diffDays);
 	duckyinfo.push("ID: " + bot.user.id);
 	var duckyout = duckyinfo.join("\n");
 	bot.sendMessage(message, duckyout);
